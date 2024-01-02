@@ -1,10 +1,10 @@
 name: 'Deploy to AWS CloudFormation'
 
 on: 
-  # push:
-  #   branches: [ master ]
-  # pull_request:
-  #   branches: [ master ]
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
       region:
         description: 'AWS Region to deploy to'
         required: true
-        default: 'ap-southeast-1'
+        default: 'us-east-1'
 
 
 jobs:
@@ -30,16 +30,16 @@ jobs:
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: ${{ secrets.ACCESS_KEY }}
-          aws-secret-access-key: ${{ secrets.ACCESS_KEY_SECRET }}
+          aws-access-key-id: ${{ secrets.DEV_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.DEV_SECRET_ACCESS_KEY }}
           aws-region: ${{ github.event.inputs.region }}
 
       # Deploy to AWS CloudFormation
       - name: Deploy to AWS CloudFormation
         uses: aws-actions/aws-cloudformation-github-deploy@v1
         with:
-          name: tekloon-test-stack
-          template: test-stack.yaml
+          name: az-test-stack
+          template: template.yaml
           no-fail-on-empty-changeset: "1"
-          parameter-overrides: "EC2InstanceType=t2.micro"
+          parameter-overrides: "S3Name=test-jabzum-az-bucket"
   
