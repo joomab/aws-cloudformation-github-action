@@ -1,13 +1,10 @@
 name: Pipeline
 
-on:
+on: 
   push:
-    branches:
-      - 'main'
-      - 'feature**'
-  delete:
-    branches:
-      - 'feature**'
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
 
 env:
   PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.DEV_ACCESS_KEY }}
