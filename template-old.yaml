@@ -18,3 +18,15 @@ Resources:
         RestrictPublicBuckets: true
       VersioningConfiguration:
         Status: Enabled
+
+  QABucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: "qa-jabzum-bucket-az-camcar"
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      VersioningConfiguration:
+        Status: Enabled
