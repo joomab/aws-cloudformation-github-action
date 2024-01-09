@@ -104,7 +104,7 @@ jobs:
   #           --role-arn ${TESTING_CLOUDFORMATION_EXECUTION_ROLE}
 
   build-and-package:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master'
     # needs: [test]
     runs-on: ubuntu-latest
     steps:
@@ -206,7 +206,7 @@ jobs:
   #         # trigger the integration tests here
 
   deploy-prod:
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/master'
     # needs: [integration-test]
     needs: [build-and-package]
     runs-on: ubuntu-latest
