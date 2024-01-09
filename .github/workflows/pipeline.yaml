@@ -30,13 +30,13 @@ env:
   PROD_REGION: us-east-1
 
 jobs:
-  test:
-    if: github.event_name == 'push'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - run: |
-          # trigger the tests here
+  # test:
+  #   if: github.event_name == 'push'
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - run: |
+  #         # trigger the tests here
 
   # delete-feature:
   #   if: startsWith(github.event.ref, 'feature') && github.event_name == 'delete'
