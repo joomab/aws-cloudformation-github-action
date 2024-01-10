@@ -5,6 +5,7 @@ on:
     branches: [ master ]
   pull_request:
     branches: [ master ]
+  workflow_dispatch:
 
 env:
   PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.DEV_ACCESS_KEY }}
