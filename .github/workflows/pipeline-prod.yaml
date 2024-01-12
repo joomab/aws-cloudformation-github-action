@@ -2,7 +2,7 @@ name: Prod-Pipeline
 
 on: 
   push:
-    branches: [ master ]
+    branches: [ prod ]
   workflow_dispatch:
 
 env:
