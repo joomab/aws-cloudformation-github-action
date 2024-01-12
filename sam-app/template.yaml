@@ -57,3 +57,6 @@ Outputs:
   ParametersValues:
     Description: Example
     Value: !Sub "${Parameter1}-${Parameter2}-xd"
+  ParametersValuesTemp2:
+    Description: Example
+    Value: !Sub "${Parameter1}-${Parameter2}-temp2"
