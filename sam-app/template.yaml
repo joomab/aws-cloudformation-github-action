@@ -14,6 +14,17 @@ Globals:
     # You can add LoggingConfig parameters such as the Logformat, Log Group, and SystemLogLevel or ApplicationLogLevel. Learn more here https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/sam-resource-function.html#sam-function-loggingconfig.
     LoggingConfig:
       LogFormat: JSON
+
+Parameters:
+  Parameter1:
+    Type: String
+    Description: Example1
+    Default: ""
+  Parameter2:
+    Type: String
+    Description: Example2
+    Default: ""
+
 Resources:
   HelloWorldFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -43,3 +54,6 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: Implicit IAM Role created for Hello World function
     Value: !GetAtt HelloWorldFunctionRole.Arn
+  ParametersValues:
+    Description: Example
+    Value: !Sub "${Parameter1}-${Parameter2}"

@@ -405,6 +405,14 @@ Outputs:
         - !GetAtt ArtifactsBucket.Arn
         - !Ref ArtifactsBucketArn
 
+  ArtifactsBucketName:
+    Description: ARN of the Artifacts bucket
+    Value:
+      Fn::If:
+        - MissingArtifactsBucket
+        - !Ref ArtifactsBucket
+        - ""
+
   ImageRepository:
     Description: ARN of the ECR image repository
     Condition: ShouldHaveImageRepository

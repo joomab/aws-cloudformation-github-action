@@ -1,4 +1,4 @@
-name: Pipeline
+name: Dev-Pipeline
 
 on: 
   push:
@@ -11,15 +11,15 @@ env:
   PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.DEV_ACCESS_KEY }}
   PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.DEV_SECRET_ACCESS_KEY }}
   SAM_TEMPLATE: sam-app/template.yaml
-  TESTING_STACK_NAME: az-latam-camcar-xxxxfuente1-dev
-  TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::582115490133:role/aws-sam-cli-managed-dev-pipel-PipelineExecutionRole-SaOeLu91MMIQ
-  TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::582115490133:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionRo-e8miLV4DOAr5
-  TESTING_ARTIFACTS_BUCKET: aws-sam-cli-managed-dev-pipeline-r-artifactsbucket-qqvudychogfz
+  # TESTING_STACK_NAME: az-latam-camcar-xxxxfuente1-dev
+  # TESTING_PIPELINE_EXECUTION_ROLE: arn:aws:iam::582115490133:role/aws-sam-cli-managed-dev-pipel-PipelineExecutionRole-SaOeLu91MMIQ
+  # TESTING_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::582115490133:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionRo-e8miLV4DOAr5
+  # TESTING_ARTIFACTS_BUCKET: aws-sam-cli-managed-dev-pipeline-r-artifactsbucket-qqvudychogfz
   # If there are functions with "Image" PackageType in your template,
   # uncomment the line below and add "--image-repository ${TESTING_IMAGE_REPOSITORY}" to
   # testing "sam package" and "sam deploy" commands.
   # TESTING_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
-  TESTING_REGION: us-east-1
+  # TESTING_REGION: us-east-1
   PROD_STACK_NAME: az-latam-camcar-xxxxfuente1-prod
   PROD_PIPELINE_EXECUTION_ROLE: arn:aws:iam::582115490133:role/aws-sam-cli-managed-dev-pipel-PipelineExecutionRole-SaOeLu91MMIQ
   PROD_CLOUDFORMATION_EXECUTION_ROLE: arn:aws:iam::582115490133:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionRo-e8miLV4DOAr5
@@ -29,6 +29,7 @@ env:
   # prod "sam package" and "sam deploy" commands.
   # PROD_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
   PROD_REGION: us-east-1
+  STACK_PARAMETERS: ${{ secrets.DEV_PARAMETERS }}
 
 jobs:
   # test:
@@ -236,6 +237,7 @@ jobs:
 
       - name: Deploy to production account
         run: |
+          echo $STACK_PARAMETERS > parameters.json
           sam deploy --stack-name ${PROD_STACK_NAME} \
             --template packaged-prod.yaml \
             --capabilities CAPABILITY_IAM \
@@ -243,3 +245,4 @@ jobs:
             --s3-bucket ${PROD_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${PROD_CLOUDFORMATION_EXECUTION_ROLE}
+            --parameter-overrides $(cat parameters.json | jq -r '.[] | [.ParameterKey, .ParameterValue] | join("=")')
