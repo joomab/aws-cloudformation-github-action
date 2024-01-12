@@ -29,7 +29,7 @@ env:
   # prod "sam package" and "sam deploy" commands.
   # PROD_IMAGE_REPOSITORY = '0123456789.dkr.ecr.region.amazonaws.com/repository-name'
   PROD_REGION: us-east-1
-  STACK_PARAMETERS: ${{ env.DEV_PARAMETERS }}
+  STACK_PARAMETERS: ${{ secrets.DEV_PARAMETERS }}
 
 jobs:
   # test:
@@ -237,6 +237,7 @@ jobs:
 
       - name: Deploy to production account
         run: |
+          echo $STACK_PARAMETERS
           echo $STACK_PARAMETERS > parameters.json
           sam deploy --stack-name ${PROD_STACK_NAME} \
             --template packaged-prod.yaml \
