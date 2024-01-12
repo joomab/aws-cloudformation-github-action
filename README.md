@@ -12,6 +12,8 @@ A continuación el detalle del proceso de los pasos anteriores.
 
 Desplegar el template template-baseline-devops.yaml en las cuentas de despliegue (ej. Dev, QA, Prod).
 
+El nombre del stack debe respetar el formato requerido por cliente o proceso.
+
 Los parametros que debe respetar el despliegue son los siguientes:
 
 - ArtifactsBucketArn: (vacio)
@@ -23,13 +25,13 @@ Los parametros que debe respetar el despliegue son los siguientes:
 - OidcClientId: (vacio)
 - OidcProviderUrl: (vacio)
 - PipelineExecutionRoleArn: (vacio)
-- PipelineUserArn: (vacio)
+- PipelineUserArn: El arn del usuario con el acceso programatico
 - SubjectClaim: (vacio)
 - UseOidcProvider: false
 
 Nota: En la fase de creación del stack, en la sección de "Tags", agregar los tags que correspondan. Esta seccion asegura que todos los recursos desplegados en el stack se creen con esos tags.
 
-# (Paso 2) Desplegar los recursos necesarios en las cuentas de ambientes (ej. Dev, QA, Prod).
+# (Paso 2) Agregar los archivos necesarios a la solución SAM.
 
 Dentro de la carpeta sam-app agregar la solución SAM completa que desea desplegar.
 

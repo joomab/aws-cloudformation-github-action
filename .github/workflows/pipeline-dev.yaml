@@ -31,30 +31,30 @@ jobs:
       - name: Build resources
         run: sam build --template ${SAM_TEMPLATE} --use-container
 
-      - name: Assume the prod pipeline user role
+      - name: Assume the env pipeline user role
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.ENV_REGION }}
           role-to-assume: ${{ env.ENV_PIPELINE_EXECUTION_ROLE }}
-          role-session-name: prod-packaging
+          role-session-name: env-packaging
           role-duration-seconds: 3600
           role-skip-session-tagging: true
 
-      - name: Upload artifacts to production artifact buckets
+      - name: Upload artifacts to env artifact buckets
         run: |
           sam package \
             --s3-bucket ${ENV_ARTIFACTS_BUCKET} \
             --region ${ENV_REGION} \
-            --output-template-file packaged-prod.yaml
+            --output-template-file packaged-env.yaml
 
       - uses: actions/upload-artifact@v3
         with:
-          name: packaged-prod.yaml
-          path: packaged-prod.yaml
+          name: packaged-env.yaml
+          path: packaged-env.yaml
 
-  deploy-prod:
+  deploy-env:
     # if: github.ref == 'refs/heads/master'
     needs: [build-and-package]
     runs-on: ubuntu-latest
@@ -68,25 +68,25 @@ jobs:
           use-installer: true
       - uses: actions/download-artifact@v3
         with:
-          name: packaged-prod.yaml
+          name: packaged-env.yaml
 
-      - name: Assume the prod pipeline user role
+      - name: Assume the env pipeline user role
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
           aws-region: ${{ env.ENV_REGION }}
           role-to-assume: ${{ env.ENV_PIPELINE_EXECUTION_ROLE }}
-          role-session-name: prod-deployment
+          role-session-name: env-deployment
           role-duration-seconds: 3600
           role-skip-session-tagging: true
 
-      - name: Deploy to production account
+      - name: Deploy to env account
         run: |
           echo $STACK_PARAMETERS > parameters.json
           SAM_PARAMETERS=$( cat parameters.json | jq -r '[ .[] | "\(.ParameterKey)=\(.ParameterValue)" ] | join(" ")' )
           sam deploy --stack-name ${ENV_STACK_NAME} \
-            --template packaged-prod.yaml \
+            --template packaged-env.yaml \
             --capabilities CAPABILITY_IAM \
             --region ${ENV_REGION} \
             --s3-bucket ${ENV_ARTIFACTS_BUCKET} \
