@@ -237,7 +237,6 @@ jobs:
 
       - name: Deploy to production account
         run: |
-          echo $STACK_PARAMETERS
           echo $STACK_PARAMETERS > parameters.json
           SAM_PARAMETERS=$( cat parameters.json | jq -r '.[] | "\(.ParameterKey)=\(.ParameterValue)"' )
           sam deploy --stack-name ${PROD_STACK_NAME} \

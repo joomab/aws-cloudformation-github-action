@@ -56,4 +56,4 @@ Outputs:
     Value: !GetAtt HelloWorldFunctionRole.Arn
   ParametersValues:
     Description: Example
-    Value: !Sub "${Parameter1}-${Parameter2}"
+    Value: !Sub "${Parameter1}-${Parameter2}-xd"
