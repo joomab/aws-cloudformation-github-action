@@ -239,6 +239,7 @@ jobs:
         run: |
           echo $STACK_PARAMETERS
           echo $STACK_PARAMETERS > parameters.json
+          cat parameters.json
           sam deploy --stack-name ${PROD_STACK_NAME} \
             --template packaged-prod.yaml \
             --capabilities CAPABILITY_IAM \
