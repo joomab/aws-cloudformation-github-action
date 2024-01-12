@@ -238,7 +238,7 @@ jobs:
       - name: Deploy to production account
         run: |
           echo $STACK_PARAMETERS > parameters.json
-          SAM_PARAMETERS=$( cat parameters.json | jq -r '.[] | "\(.ParameterKey)=\(.ParameterValue)"' )
+          SAM_PARAMETERS=$( cat parameters.json | jq -r '[ .[] | "\(.ParameterKey)=\(.ParameterValue)" ] | join(" ")' )
           sam deploy --stack-name ${PROD_STACK_NAME} \
             --template packaged-prod.yaml \
             --capabilities CAPABILITY_IAM \
