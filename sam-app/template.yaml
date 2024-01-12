@@ -60,3 +60,6 @@ Outputs:
   ParametersValuesTemp2:
     Description: Example
     Value: !Sub "${Parameter1}-${Parameter2}-temp2"
+  ParametersValuesTemp3:
+    Description: Example
+    Value: !Sub "${Parameter1}-${Parameter2}-output-con-nathaly"
