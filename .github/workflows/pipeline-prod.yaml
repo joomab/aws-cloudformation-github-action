@@ -1,93 +1,93 @@
-name: Prod-Pipeline
+# name: Prod-Pipeline
 
-on: 
-  push:
-    branches: [ prod ]
-  workflow_dispatch:
+# on: 
+#   push:
+#     branches: [ prod ]
+#   workflow_dispatch:
 
-env:
-  PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.DEV_ACCESS_KEY }}
-  PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.DEV_SECRET_ACCESS_KEY }}
-  SAM_TEMPLATE: sam-app/template.yaml
-  ENV_STACK_NAME: az-latam-camcar-xxxxfuente1-prod
-  ENV_PIPELINE_EXECUTION_ROLE: ${{ secrets.DEV_PIPELINE_EXECUTION_ROLE }}
-  ENV_CLOUDFORMATION_EXECUTION_ROLE: ${{ secrets.DEV_CLOUDFORMATION_EXECUTION_ROLE }}
-  ENV_ARTIFACTS_BUCKET: ${{ secrets.DEV_ARTIFACTS_BUCKET }}
-  ENV_REGION: us-east-1
-  STACK_PARAMETERS: ${{ vars.DEV_PARAMETERS }}
+# env:
+#   PIPELINE_USER_ACCESS_KEY_ID: ${{ secrets.PROD_ACCESS_KEY }}
+#   PIPELINE_USER_SECRET_ACCESS_KEY: ${{ secrets.PROD_SECRET_ACCESS_KEY }}
+#   SAM_TEMPLATE: sam-app/template.yaml
+#   ENV_STACK_NAME: ${{ vars.PROD_STACK_NAME }}
+#   ENV_PIPELINE_EXECUTION_ROLE: ${{ secrets.PROD_PIPELINE_EXECUTION_ROLE }}
+#   ENV_CLOUDFORMATION_EXECUTION_ROLE: ${{ secrets.PROD_CLOUDFORMATION_EXECUTION_ROLE }}
+#   ENV_ARTIFACTS_BUCKET: ${{ secrets.PROD_ARTIFACTS_BUCKET }}
+#   ENV_REGION: eu-west-1
+#   STACK_PARAMETERS: ${{ vars.PROD_PARAMETERS }}
 
-jobs:
-  build-and-package:
-    # if: github.ref == 'refs/heads/master'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: aws-actions/setup-sam@v2
-        with:
-          use-installer: true
+# jobs:
+#   build-and-package:
+#     # if: github.ref == 'refs/heads/master'
+#     runs-on: ubuntu-latest
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: aws-actions/setup-sam@v2
+#         with:
+#           use-installer: true
 
-      - name: Build resources
-        run: sam build --template ${SAM_TEMPLATE} --use-container
+#       - name: Build resources
+#         run: sam build --template ${SAM_TEMPLATE} --use-container
 
-      - name: Assume the env pipeline user role
-        uses: aws-actions/configure-aws-credentials@v1-node16
-        with:
-          aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.ENV_REGION }}
-          role-to-assume: ${{ env.ENV_PIPELINE_EXECUTION_ROLE }}
-          role-session-name: env-packaging
-          role-duration-seconds: 3600
-          role-skip-session-tagging: true
+#       - name: Assume the env pipeline user role
+#         uses: aws-actions/configure-aws-credentials@v1-node16
+#         with:
+#           aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.ENV_REGION }}
+#           role-to-assume: ${{ env.ENV_PIPELINE_EXECUTION_ROLE }}
+#           role-session-name: env-packaging
+#           role-duration-seconds: 3600
+#           role-skip-session-tagging: true
 
-      - name: Upload artifacts to env artifact buckets
-        run: |
-          sam package \
-            --s3-bucket ${ENV_ARTIFACTS_BUCKET} \
-            --region ${ENV_REGION} \
-            --output-template-file packaged-env.yaml
+#       - name: Upload artifacts to env artifact buckets
+#         run: |
+#           sam package \
+#             --s3-bucket ${ENV_ARTIFACTS_BUCKET} \
+#             --region ${ENV_REGION} \
+#             --output-template-file packaged-env.yaml
 
-      - uses: actions/upload-artifact@v3
-        with:
-          name: packaged-env.yaml
-          path: packaged-env.yaml
+#       - uses: actions/upload-artifact@v3
+#         with:
+#           name: packaged-env.yaml
+#           path: packaged-env.yaml
 
-  deploy-env:
-    # if: github.ref == 'refs/heads/master'
-    needs: [build-and-package]
-    runs-on: ubuntu-latest
-    # Configure GitHub Action Environment to have a manual approval step before deployment to production
-    # https://docs.github.com/en/actions/reference/environments
-    # environment: <configured-environment>
-    steps:
-      - uses: actions/checkout@v3
-      - uses: aws-actions/setup-sam@v2
-        with:
-          use-installer: true
-      - uses: actions/download-artifact@v3
-        with:
-          name: packaged-env.yaml
+#   deploy-env:
+#     # if: github.ref == 'refs/heads/master'
+#     needs: [build-and-package]
+#     runs-on: ubuntu-latest
+#     # Configure GitHub Action Environment to have a manual approval step before deployment to production
+#     # https://docs.github.com/en/actions/reference/environments
+#     # environment: <configured-environment>
+#     steps:
+#       - uses: actions/checkout@v3
+#       - uses: aws-actions/setup-sam@v2
+#         with:
+#           use-installer: true
+#       - uses: actions/download-artifact@v3
+#         with:
+#           name: packaged-env.yaml
 
-      - name: Assume the env pipeline user role
-        uses: aws-actions/configure-aws-credentials@v1-node16
-        with:
-          aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
-          aws-region: ${{ env.ENV_REGION }}
-          role-to-assume: ${{ env.ENV_PIPELINE_EXECUTION_ROLE }}
-          role-session-name: env-deployment
-          role-duration-seconds: 3600
-          role-skip-session-tagging: true
+#       - name: Assume the env pipeline user role
+#         uses: aws-actions/configure-aws-credentials@v1-node16
+#         with:
+#           aws-access-key-id: ${{ env.PIPELINE_USER_ACCESS_KEY_ID }}
+#           aws-secret-access-key: ${{ env.PIPELINE_USER_SECRET_ACCESS_KEY }}
+#           aws-region: ${{ env.ENV_REGION }}
+#           role-to-assume: ${{ env.ENV_PIPELINE_EXECUTION_ROLE }}
+#           role-session-name: env-deployment
+#           role-duration-seconds: 3600
+#           role-skip-session-tagging: true
 
-      - name: Deploy to env account
-        run: |
-          echo $STACK_PARAMETERS > parameters.json
-          SAM_PARAMETERS=$( cat parameters.json | jq -r '[ .[] | "\(.ParameterKey)=\(.ParameterValue)" ] | join(" ")' )
-          sam deploy --stack-name ${ENV_STACK_NAME} \
-            --template packaged-env.yaml \
-            --capabilities CAPABILITY_IAM \
-            --region ${ENV_REGION} \
-            --s3-bucket ${ENV_ARTIFACTS_BUCKET} \
-            --no-fail-on-empty-changeset \
-            --role-arn ${ENV_CLOUDFORMATION_EXECUTION_ROLE} \
-            --parameter-overrides ${SAM_PARAMETERS}
+#       - name: Deploy to env account
+#         run: |
+#           echo $STACK_PARAMETERS > parameters.json
+#           SAM_PARAMETERS=$( cat parameters.json | jq -r '[ .[] | "\(.ParameterKey)=\(.ParameterValue)" ] | join(" ")' )
+#           sam deploy --stack-name ${ENV_STACK_NAME} \
+#             --template packaged-env.yaml \
+#             --capabilities CAPABILITY_IAM \
+#             --region ${ENV_REGION} \
+#             --s3-bucket ${ENV_ARTIFACTS_BUCKET} \
+#             --no-fail-on-empty-changeset \
+#             --role-arn ${ENV_CLOUDFORMATION_EXECUTION_ROLE} \
+#             --parameter-overrides ${SAM_PARAMETERS}
