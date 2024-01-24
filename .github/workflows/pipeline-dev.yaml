@@ -22,14 +22,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - uses: uraimo/run-on-arch-action@v2
       - uses: aws-actions/setup-sam@v2
         with:
-          arch: armv7
-          distro: ubuntu22.04
           use-installer: true
 
       - name: Build resources
+        uses: uraimo/run-on-arch-action@v2
+        with:
+          arch: armv7
+          distro: ubuntu22.04
         run: sam build --template ${SAM_TEMPLATE}
 
       - name: Assume the env pipeline user role
