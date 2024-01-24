@@ -30,27 +30,11 @@ jobs:
         with:
           arch: armv7
           distro: ubuntu22.04
-          install: |
-            case "${{ matrix.distro }}" in
-              ubuntu*|jessie|stretch|buster|bullseye)
-                apt-get update -q -y
-                apt-get install -q -y git
-                wget https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-arm64.zip
-                unzip aws-sam-cli-linux-arm64.zip -d sam-installation
-                sudo ./sam-installation/install
-                sam --version
-                ;;
-              fedora*)
-                dnf -y update
-                dnf -y install git which
-                ;;
-              alpine*)
-                apk update
-                apk add git
-                ;;
-            esac
           run: |
-
+              wget https://github.com/aws/aws-sam-cli/releases/latest/download/aws-sam-cli-linux-arm64.zip
+              unzip aws-sam-cli-linux-arm64.zip -d sam-installation
+              sudo ./sam-installation/install
+              sam --version°
               sam build --template sam-app/template.yaml --use-container
 
       - name: Assume the env pipeline user role
