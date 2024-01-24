@@ -31,7 +31,7 @@ jobs:
           arch: armv7
           distro: ubuntu22.04
           run: |
-              sam build --template ${SAM_TEMPLATE}
+              sam build --template sam-app/template.yaml --use-container
 
       - name: Assume the env pipeline user role
         uses: aws-actions/configure-aws-credentials@v1-node16
