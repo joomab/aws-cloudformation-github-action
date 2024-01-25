@@ -87,7 +87,8 @@ jobs:
       - name: Deploy to env account
         run: |
           echo $STACK_PARAMETERS > parameters.json
-          SAM_PARAMETERS=$( cat parameters.json | jq -r '[ .[] | "\(.ParameterKey)=\(.ParameterValue)" ] | join(" ")' )
+          SAM_PARAMETERS=$( cat parameters.json | jq -r '[ .[] | "\"\(.ParameterKey)=\\\"\(.ParameterValue)\\\"\"" ] | join(" ")' )
+          echo $SAM_PARAMETERS
           sam deploy --stack-name ${ENV_STACK_NAME} \
             --template packaged-env.yaml \
             --capabilities CAPABILITY_IAM \
