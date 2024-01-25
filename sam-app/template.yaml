@@ -24,6 +24,10 @@ Parameters:
     Type: String
     Description: Example2
     Default: ""
+  Parameter3:
+    Type: String
+    Description: Example3
+    Default: ""
 
 Resources:
   HelloWorldFunction:
@@ -63,3 +67,6 @@ Outputs:
   ParametersValuesTemp3:
     Description: Example
     Value: !Sub "${Parameter1}-${Parameter2}-output-con-nathaly"
+  ParametersWithSpaces:
+    Description: lul
+    Value: !Ref Parameter3
