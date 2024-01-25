@@ -25,7 +25,12 @@ jobs:
       - uses: aws-actions/setup-sam@v2
         with:
           use-installer: true
-
+      - name: Set up Python
+        # This is the version of the action for setting up Python, not the Python version.
+        uses: actions/setup-python@v4
+        with:
+          # Semantic version range syntax or exact version of a Python version
+          python-version: '3.x'
       - name: Build resources
         run: |
           sam validate --template "${SAM_TEMPLATE}"
@@ -54,6 +59,7 @@ jobs:
           name: packaged-env.yaml
           path: packaged-env.yaml
   deploy:
+    needs: [build-and-package]
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
     # Steps represent a sequence of tasks that will be executed as part of the job
