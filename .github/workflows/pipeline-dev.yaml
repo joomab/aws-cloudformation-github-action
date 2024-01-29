@@ -87,8 +87,10 @@ jobs:
       - name: Deploy to env account
         run: |
           echo $STACK_PARAMETERS > parameters.json
-          SAM_PARAMETERS=$( cat parameters.json | jq -r '[ .[] | "\(.ParameterKey)=\(.ParameterValue)" ] | join(" ")' )
+          result=$(python converter.py)
+
           echo $SAM_PARAMETERS
+          echo $result
           sam deploy --stack-name ${ENV_STACK_NAME} \
             --template packaged-env.yaml \
             --capabilities CAPABILITY_IAM \
@@ -96,4 +98,4 @@ jobs:
             --s3-bucket ${ENV_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${ENV_CLOUDFORMATION_EXECUTION_ROLE} \
-            --parameter-overrides 'Parameter1="hola"' 'Parameter2="mundo"' 'Parameter3="Con espacios"'
+            --parameter-overrides ${result}
