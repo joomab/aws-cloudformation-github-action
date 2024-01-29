@@ -98,4 +98,4 @@ jobs:
             --s3-bucket ${ENV_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${ENV_CLOUDFORMATION_EXECUTION_ROLE} \
-            --parameter-overrides ${result}
+            --parameter-overrides $(echo $result)
