@@ -86,11 +86,11 @@ jobs:
 
       - name: Deploy to env account
         run: |
-          echo $STACK_PARAMETERS > parameters.json
-          result=$(python converter.py)
+          # echo $STACK_PARAMETERS > parameters.json
+          # result=$(python converter.py)
 
-          echo $SAM_PARAMETERS
-          echo $result
+          # echo $SAM_PARAMETERS
+          # echo $result
           sam deploy --stack-name ${ENV_STACK_NAME} \
             --template packaged-env.yaml \
             --capabilities CAPABILITY_IAM \
@@ -98,4 +98,4 @@ jobs:
             --s3-bucket ${ENV_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${ENV_CLOUDFORMATION_EXECUTION_ROLE} \
-            --parameter-overrides $(echo $result)
+            --parameter-overrides ${STACK_PARAMETERS}
