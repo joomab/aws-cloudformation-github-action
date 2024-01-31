@@ -86,7 +86,7 @@ jobs:
 
       - name: Deploy to env account
         run: |
-          # echo $STACK_PARAMETERS > parameters.json
+          echo $STACK_PARAMETERS > parameters.json
           # result=$(python converter.py)
 
           # echo $SAM_PARAMETERS
@@ -98,4 +98,4 @@ jobs:
             --s3-bucket ${ENV_ARTIFACTS_BUCKET} \
             --no-fail-on-empty-changeset \
             --role-arn ${ENV_CLOUDFORMATION_EXECUTION_ROLE} \
-            --parameter-overrides ${STACK_PARAMETERS}
+            --parameter-overrides "$(jq -j 'to_entries[] | "\(.key)='\\\"'\(.value)'\\\"''\ '"' parameters.json)"
